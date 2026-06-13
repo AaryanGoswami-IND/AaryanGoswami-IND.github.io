@@ -559,39 +559,52 @@ document.querySelectorAll('.btn').forEach(btn => {
   });
 });
 
-/* ===== CURSOR TRAIL ===== */
-const trailContainer = document.getElementById('cursor-trail-container');
-const trailDots = [];
-const TRAIL_LENGTH = 20;
+/* ===== CURSOR TRAIL (connected line) ===== */
+const trailCanvas = document.createElement('canvas');
+trailCanvas.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:9997;';
+document.body.appendChild(trailCanvas);
+const trailCtx = trailCanvas.getContext('2d');
 
-for (let i = 0; i < TRAIL_LENGTH; i++) {
-  const dot = document.createElement('div');
-  dot.className = 'cursor-trail-dot';
-  dot.style.opacity = (1 - i / TRAIL_LENGTH) * 0.7;
-  dot.style.width = dot.style.height = Math.max(2, 9 - i * 0.25) + 'px';
-  trailContainer.appendChild(dot);
-  trailDots.push({ el: dot, x: -100, y: -100 });
+function resizeTrailCanvas() {
+  trailCanvas.width = window.innerWidth;
+  trailCanvas.height = window.innerHeight;
 }
+resizeTrailCanvas();
+window.addEventListener('resize', resizeTrailCanvas);
 
-let trailMouseX = -100, trailMouseY = -100;
+const TRAIL_POINTS = 20;
+const trail = Array.from({ length: TRAIL_POINTS }, () => ({ x: -200, y: -200 }));
+
+let trailMouseX = -200, trailMouseY = -200;
 document.addEventListener('mousemove', e => {
   trailMouseX = e.clientX;
   trailMouseY = e.clientY;
 });
 
 function animateTrail() {
-  trailDots.forEach((dot, i) => {
-    const prev = trailDots[i - 1];
-    if (i === 0) {
-      dot.x += (trailMouseX - dot.x) * 0.4;
-      dot.y += (trailMouseY - dot.y) * 0.4;
-    } else {
-      dot.x += (prev.x - dot.x) * 0.5;
-      dot.y += (prev.y - dot.y) * 0.5;
-    }
-    dot.el.style.left = dot.x + 'px';
-    dot.el.style.top = dot.y + 'px';
-  });
+  // Each point follows the one in front
+  trail[0].x += (trailMouseX - trail[0].x) * 0.4;
+  trail[0].y += (trailMouseY - trail[0].y) * 0.4;
+  for (let i = 1; i < TRAIL_POINTS; i++) {
+    trail[i].x += (trail[i - 1].x - trail[i].x) * 0.5;
+    trail[i].y += (trail[i - 1].y - trail[i].y) * 0.5;
+  }
+
+  trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+
+  // Draw each segment with decreasing width and opacity
+  for (let i = 0; i < TRAIL_POINTS - 1; i++) {
+    const t = 1 - i / TRAIL_POINTS;
+    trailCtx.beginPath();
+    trailCtx.moveTo(trail[i].x, trail[i].y);
+    trailCtx.lineTo(trail[i + 1].x, trail[i + 1].y);
+    trailCtx.strokeStyle = `rgba(255, 106, 61, ${t * 0.75})`;
+    trailCtx.lineWidth = t * 5;
+    trailCtx.lineCap = 'round';
+    trailCtx.lineJoin = 'round';
+    trailCtx.stroke();
+  }
+
   requestAnimationFrame(animateTrail);
 }
 animateTrail();
