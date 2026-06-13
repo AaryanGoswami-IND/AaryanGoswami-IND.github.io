@@ -562,7 +562,7 @@ document.querySelectorAll('.btn').forEach(btn => {
 /* ===== CURSOR TRAIL ===== */
 const trailContainer = document.getElementById('cursor-trail-container');
 const trailDots = [];
-const TRAIL_LENGTH = 28;
+const TRAIL_LENGTH = 20;
 
 for (let i = 0; i < TRAIL_LENGTH; i++) {
   const dot = document.createElement('div');
