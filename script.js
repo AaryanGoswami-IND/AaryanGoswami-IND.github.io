@@ -541,23 +541,22 @@ Particle.prototype.update = function() {
 };
 
 /* ===== GLITCH TEXT EFFECT ===== */
-function triggerGlitch(el) {
-  if (el.classList.contains('is-glitching')) return;
-  el.classList.add('is-glitching');
-  setTimeout(() => el.classList.remove('is-glitching'), 600);
-}
-
+// CSS handles the animation. JS just intensifies it periodically.
 window.addEventListener('load', () => {
-  // Fire once on load after 1.2s
   setTimeout(() => {
     document.querySelectorAll('.glitch-text').forEach((el, i) => {
-      setTimeout(() => triggerGlitch(el), i * 300);
+      setTimeout(() => {
+        el.classList.add('glitch-active');
+        setTimeout(() => el.classList.remove('glitch-active'), 1000);
+      }, i * 300);
     });
   }, 1200);
-  // Repeat every 5 seconds
   setInterval(() => {
     document.querySelectorAll('.glitch-text').forEach((el, i) => {
-      setTimeout(() => triggerGlitch(el), i * 300);
+      setTimeout(() => {
+        el.classList.add('glitch-active');
+        setTimeout(() => el.classList.remove('glitch-active'), 1000);
+      }, i * 300);
     });
   }, 5000);
 });

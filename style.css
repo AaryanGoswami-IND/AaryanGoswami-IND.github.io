@@ -670,12 +670,11 @@ body.cursor-hover #cursor-ring {
   box-shadow: 0 0 6px rgba(255, 106, 61, 0.6);
 }
 
-/* ===== GLITCH TEXT CSS ===== */
+/* ===== GLITCH TEXT CSS (tutorial style) ===== */
 .glitch-text {
   position: relative;
   display: inline-block;
 }
-/* Hidden ghost layers — only appear when .is-glitching is active */
 .glitch-text::before,
 .glitch-text::after {
   content: attr(data-text);
@@ -683,39 +682,56 @@ body.cursor-hover #cursor-ring {
   top: 0; left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0;
+  background: transparent;
   pointer-events: none;
 }
-/* Orange layer — shifts right with horizontal slices */
-.glitch-text.is-glitching::before {
-  opacity: 1;
+/* Orange/red layer */
+.glitch-text::before {
+  left: 2px;
   color: #ff6a3d;
-  text-shadow: none;
-  animation: glitch-slice-orange 0.6s steps(1) forwards;
+  clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+  animation: glitch-top 5s infinite linear;
+  animation-delay: 0s;
 }
-/* Purple layer — shifts left with different slices */
-.glitch-text.is-glitching::after {
-  opacity: 1;
+/* Cyan/purple layer */
+.glitch-text::after {
+  left: -2px;
   color: #9d5cff;
-  text-shadow: none;
-  animation: glitch-slice-purple 0.6s steps(1) forwards;
+  clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+  animation: glitch-bottom 5s infinite linear;
+  animation-delay: -2.5s;
 }
-@keyframes glitch-slice-orange {
-  0%   { clip-path: polygon(0 10%, 100% 10%, 100% 28%, 0 28%); transform: translateX(-5px); }
-  16%  { clip-path: polygon(0 55%, 100% 55%, 100% 68%, 0 68%); transform: translateX(5px); }
-  33%  { clip-path: polygon(0 72%, 100% 72%, 100% 85%, 0 85%); transform: translateX(-3px); }
-  50%  { clip-path: polygon(0 3%,  100% 3%,  100% 18%, 0 18%); transform: translateX(3px); }
-  66%  { clip-path: polygon(0 38%, 100% 38%, 100% 52%, 0 52%); transform: translateX(-4px); }
-  83%  { clip-path: polygon(0 80%, 100% 80%, 100% 92%, 0 92%); transform: translateX(2px); }
-  100% { clip-path: polygon(0 0, 0 0, 0 0, 0 0); transform: translateX(0); opacity: 0; }
+/* Intensified state */
+.glitch-text.glitch-active::before {
+  animation: glitch-top 0.3s infinite linear;
 }
-@keyframes glitch-slice-purple {
-  0%   { clip-path: polygon(0 62%, 100% 62%, 100% 78%, 0 78%); transform: translateX(5px); }
-  16%  { clip-path: polygon(0 22%, 100% 22%, 100% 38%, 0 38%); transform: translateX(-5px); }
-  33%  { clip-path: polygon(0 85%, 100% 85%, 100% 95%, 0 95%); transform: translateX(3px); }
-  50%  { clip-path: polygon(0 45%, 100% 45%, 100% 58%, 0 58%); transform: translateX(-3px); }
-  66%  { clip-path: polygon(0 8%,  100% 8%,  100% 22%, 0 22%); transform: translateX(4px); }
-  83%  { clip-path: polygon(0 70%, 100% 70%, 100% 82%, 0 82%); transform: translateX(-2px); }
-  100% { clip-path: polygon(0 0, 0 0, 0 0, 0 0); transform: translateX(0); opacity: 0; }
+.glitch-text.glitch-active::after {
+  animation: glitch-bottom 0.3s infinite linear;
+  animation-delay: -0.15s;
 }
+@keyframes glitch-top {
+  0%   { clip-path: polygon(0 0,   100% 0,   100% 0,   0 0);   transform: translate(0); }
+  5%   { clip-path: polygon(0 8%,  100% 8%,  100% 22%, 0 22%); transform: translate(-3px, 0); }
+  10%  { clip-path: polygon(0 0,   100% 0,   100% 0,   0 0);   transform: translate(0); }
+  15%  { clip-path: polygon(0 55%, 100% 55%, 100% 65%, 0 65%); transform: translate(4px, 0); }
+  20%  { clip-path: polygon(0 0,   100% 0,   100% 0,   0 0);   transform: translate(0); }
+  25%  { clip-path: polygon(0 30%, 100% 30%, 100% 42%, 0 42%); transform: translate(-2px, 0); }
+  30%  { clip-path: polygon(0 0,   100% 0,   100% 0,   0 0);   transform: translate(0); }
+  35%  { clip-path: polygon(0 70%, 100% 70%, 100% 80%, 0 80%); transform: translate(3px, 0); }
+  40%  { clip-path: polygon(0 0,   100% 0,   100% 0,   0 0);   transform: translate(0); }
+  100% { clip-path: polygon(0 0,   100% 0,   100% 0,   0 0);   transform: translate(0); }
+}
+@keyframes glitch-bottom {
+  0%   { clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%); transform: translate(0); }
+  5%   { clip-path: polygon(0 60%,  100% 60%,  100% 75%,  0 75%);  transform: translate(4px, 0); }
+  10%  { clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%); transform: translate(0); }
+  15%  { clip-path: polygon(0 20%,  100% 20%,  100% 35%,  0 35%);  transform: translate(-3px, 0); }
+  20%  { clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%); transform: translate(0); }
+  25%  { clip-path: polygon(0 80%,  100% 80%,  100% 92%,  0 92%);  transform: translate(2px, 0); }
+  30%  { clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%); transform: translate(0); }
+  35%  { clip-path: polygon(0 45%,  100% 45%,  100% 58%,  0 58%);  transform: translate(-4px, 0); }
+  40%  { clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%); transform: translate(0); }
+  100% { clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%); transform: translate(0); }
+}
+
 
