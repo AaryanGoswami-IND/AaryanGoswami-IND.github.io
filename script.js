@@ -518,3 +518,175 @@ document.querySelector('.project-modal-backdrop').addEventListener('click', clos
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && projectModal.classList.contains('active')) closeProjectModal();
 });
+
+/* ===== MOUSE REPULSION ON PARTICLES ===== */
+let mouseParticleX = -9999, mouseParticleY = -9999;
+document.addEventListener('mousemove', e => {
+  mouseParticleX = e.clientX;
+  mouseParticleY = e.clientY;
+});
+
+const _origUpdate = Particle.prototype.update;
+Particle.prototype.update = function() {
+  _origUpdate.call(this);
+  const dx = this.x - mouseParticleX;
+  const dy = this.y - mouseParticleY;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  const repelRadius = 100;
+  if (dist < repelRadius && dist > 0) {
+    const force = (repelRadius - dist) / repelRadius;
+    this.x += (dx / dist) * force * 3;
+    this.y += (dy / dist) * force * 3;
+  }
+};
+
+/* ===== GLITCH TEXT EFFECT ===== */
+function triggerGlitch(el) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&';
+  const original = el.dataset.text;
+  let iterations = 0;
+  const maxIter = original.length * 4;
+  const interval = setInterval(() => {
+    el.textContent = original.split('').map((char, i) => {
+      if (i < iterations / 4) return original[i];
+      return chars[Math.floor(Math.random() * chars.length)];
+    }).join('');
+    iterations++;
+    if (iterations >= maxIter) {
+      el.textContent = original;
+      clearInterval(interval);
+    }
+  }, 30);
+}
+
+// Trigger glitch on page load after a short delay
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.glitch-text').forEach((el, i) => {
+      setTimeout(() => triggerGlitch(el), i * 300);
+    });
+  }, 800);
+
+  // Repeat glitch every 8 seconds for a living feel
+  setInterval(() => {
+    const els = document.querySelectorAll('.glitch-text');
+    const el = els[Math.floor(Math.random() * els.length)];
+    triggerGlitch(el);
+  }, 8000);
+});
+
+/* ===== MAGNETIC BUTTONS ===== */
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('mousemove', e => {
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    btn.style.transform = `translate(${x * 0.25}px, ${y * 0.35}px)`;
+  });
+  btn.addEventListener('mouseleave', () => {
+    btn.style.transform = 'translate(0, 0)';
+    btn.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
+  });
+  btn.addEventListener('mouseenter', () => {
+    btn.style.transition = 'transform 0.1s ease';
+  });
+});
+
+/* ===== CURSOR TRAIL ===== */
+const trailContainer = document.getElementById('cursor-trail-container');
+const trailDots = [];
+const TRAIL_LENGTH = 12;
+
+for (let i = 0; i < TRAIL_LENGTH; i++) {
+  const dot = document.createElement('div');
+  dot.className = 'cursor-trail-dot';
+  dot.style.opacity = (1 - i / TRAIL_LENGTH) * 0.6;
+  dot.style.width = dot.style.height = (8 - i * 0.5) + 'px';
+  trailContainer.appendChild(dot);
+  trailDots.push({ el: dot, x: -100, y: -100 });
+}
+
+let trailMouseX = -100, trailMouseY = -100;
+document.addEventListener('mousemove', e => {
+  trailMouseX = e.clientX;
+  trailMouseY = e.clientY;
+});
+
+function animateTrail() {
+  let x = trailMouseX, y = trailMouseY;
+  trailDots.forEach((dot, i) => {
+    const prev = trailDots[i - 1];
+    if (i === 0) {
+      dot.x += (trailMouseX - dot.x) * 0.4;
+      dot.y += (trailMouseY - dot.y) * 0.4;
+    } else {
+      dot.x += (prev.x - dot.x) * 0.5;
+      dot.y += (prev.y - dot.y) * 0.5;
+    }
+    dot.el.style.left = dot.x + 'px';
+    dot.el.style.top = dot.y + 'px';
+  });
+  requestAnimationFrame(animateTrail);
+}
+animateTrail();
+
+/* ===== TEXT SCRAMBLE ON SCROLL ===== */
+function scrambleReveal(el) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@$%';
+  const original = el.textContent;
+  let iterations = 0;
+  const maxIter = original.length * 3;
+  const interval = setInterval(() => {
+    el.textContent = original.split('').map((char, i) => {
+      if (char === ' ') return ' ';
+      if (i < iterations / 3) return original[i];
+      return chars[Math.floor(Math.random() * chars.length)];
+    }).join('');
+    iterations++;
+    if (iterations >= maxIter) {
+      el.textContent = original;
+      clearInterval(interval);
+    }
+  }, 25);
+}
+
+const scrambleObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      // Scramble the h2 tag inside section headers
+      const h2 = entry.target.querySelector('h2');
+      if (h2) {
+        setTimeout(() => scrambleReveal(h2), 200);
+      }
+      scrambleObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.4 });
+
+document.querySelectorAll('.section-header').forEach(el => scrambleObserver.observe(el));
+
+/* ===== NOISE / GRAIN OVERLAY ===== */
+const noiseCanvas = document.getElementById('noise-canvas');
+const noiseCtx = noiseCanvas.getContext('2d');
+
+function resizeNoise() {
+  noiseCanvas.width = window.innerWidth;
+  noiseCanvas.height = window.innerHeight;
+}
+resizeNoise();
+window.addEventListener('resize', resizeNoise);
+
+function generateNoise() {
+  const imageData = noiseCtx.createImageData(noiseCanvas.width, noiseCanvas.height);
+  const data = imageData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    const val = Math.random() * 255;
+    data[i] = val;
+    data[i + 1] = val;
+    data[i + 2] = val;
+    data[i + 3] = Math.random() * 15; // very subtle, max ~6% opacity
+  }
+  noiseCtx.putImageData(imageData, 0, 0);
+  requestAnimationFrame(generateNoise);
+}
+generateNoise();

@@ -641,3 +641,69 @@ body.cursor-hover #cursor-ring {
   .project-filters { gap: 0.5rem; }
   .filter-btn { padding: 0.45rem 1rem; font-size: 0.78rem; }
 }
+
+/* ===== NOISE GRAIN OVERLAY ===== */
+#noise-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+}
+
+/* ===== CURSOR TRAIL ===== */
+#cursor-trail-container {
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9996;
+}
+.cursor-trail-dot {
+  position: fixed;
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  filter: blur(1px);
+  box-shadow: 0 0 6px rgba(255, 106, 61, 0.6);
+}
+
+/* ===== GLITCH TEXT CSS ===== */
+.glitch-text {
+  position: relative;
+  display: inline-block;
+}
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  clip: rect(0, 0, 0, 0);
+}
+.glitch-text::before {
+  color: #ff6a3d;
+  animation: glitch-before 4s infinite linear;
+  text-shadow: 2px 0 #ff6a3d;
+}
+.glitch-text::after {
+  color: #9d5cff;
+  animation: glitch-after 4s infinite linear;
+  text-shadow: -2px 0 #9d5cff;
+}
+@keyframes glitch-before {
+  0%, 90%, 100% { clip: rect(0, 900px, 0, 0); transform: translate(0); }
+  92% { clip: rect(20px, 900px, 40px, 0); transform: translate(-2px, 0); }
+  94% { clip: rect(60px, 900px, 80px, 0); transform: translate(2px, 0); }
+  96% { clip: rect(10px, 900px, 30px, 0); transform: translate(-1px, 0); }
+  98% { clip: rect(50px, 900px, 70px, 0); transform: translate(1px, 0); }
+}
+@keyframes glitch-after {
+  0%, 90%, 100% { clip: rect(0, 900px, 0, 0); transform: translate(0); }
+  91% { clip: rect(40px, 900px, 60px, 0); transform: translate(2px, 0); }
+  93% { clip: rect(5px, 900px, 25px, 0); transform: translate(-2px, 0); }
+  95% { clip: rect(70px, 900px, 90px, 0); transform: translate(1px, 0); }
+  97% { clip: rect(30px, 900px, 50px, 0); transform: translate(-1px, 0); }
+}
