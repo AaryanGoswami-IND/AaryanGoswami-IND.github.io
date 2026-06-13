@@ -583,11 +583,11 @@ function animateTrail() {
   trailDots.forEach((dot, i) => {
     const prev = trailDots[i - 1];
     if (i === 0) {
-      dot.x += (trailMouseX - dot.x) * 0.3;
-      dot.y += (trailMouseY - dot.y) * 0.3;
+      dot.x += (trailMouseX - dot.x) * 0.4;
+      dot.y += (trailMouseY - dot.y) * 0.4;
     } else {
-      dot.x += (prev.x - dot.x) * 0.25;
-      dot.y += (prev.y - dot.y) * 0.25;
+      dot.x += (prev.x - dot.x) * 0.5;
+      dot.y += (prev.y - dot.y) * 0.5;
     }
     dot.el.style.left = dot.x + 'px';
     dot.el.style.top = dot.y + 'px';
