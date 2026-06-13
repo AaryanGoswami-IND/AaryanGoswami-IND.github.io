@@ -540,40 +540,28 @@ Particle.prototype.update = function() {
   }
 };
 
-/* ===== GLITCH TEXT EFFECT (cinematic flicker) ===== */
+/* ===== GLITCH TEXT EFFECT ===== */
 function triggerGlitch(el) {
-  const frames = [
-    { filter: 'brightness(1.8) saturate(2)', transform: 'translateX(3px)', duration: 50 },
-    { filter: 'brightness(0.6)', transform: 'translateX(-2px)', duration: 50 },
-    { filter: 'brightness(1.4)', transform: 'translateX(1px)', duration: 40 },
-    { filter: '', transform: '', duration: 0 }
-  ];
-  let i = 0;
-  function runFrame() {
-    if (i >= frames.length) return;
-    const f = frames[i];
-    el.style.filter = f.filter;
-    el.style.transform = f.transform;
-    i++;
-    if (i < frames.length) setTimeout(runFrame, f.duration);
-  }
-  runFrame();
+  if (el.classList.contains('is-glitching')) return;
+  el.classList.add('is-glitching');
+  setTimeout(() => el.classList.remove('is-glitching'), 600);
 }
 
-// Trigger glitch on page load
 window.addEventListener('load', () => {
+  // Fire once on load after 1.2s
   setTimeout(() => {
     document.querySelectorAll('.glitch-text').forEach((el, i) => {
-      setTimeout(() => triggerGlitch(el), i * 250);
+      setTimeout(() => triggerGlitch(el), i * 300);
     });
-  }, 900);
-  // Subtle repeat every 6 seconds
+  }, 1200);
+  // Repeat every 5 seconds
   setInterval(() => {
     document.querySelectorAll('.glitch-text').forEach((el, i) => {
-      setTimeout(() => triggerGlitch(el), i * 200);
+      setTimeout(() => triggerGlitch(el), i * 300);
     });
-  }, 6000);
+  }, 5000);
 });
+
 
 /* ===== MAGNETIC BUTTONS ===== */
 document.querySelectorAll('.btn').forEach(btn => {
