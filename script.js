@@ -583,8 +583,8 @@ document.addEventListener('mousemove', e => {
 
 function animateTrail() {
   // Each point follows the one in front
-  trail[0].x += (trailMouseX - trail[0].x) * 0.18;
-  trail[0].y += (trailMouseY - trail[0].y) * 0.18;
+  trail[0].x = trailMouseX;
+  trail[0].y = trailMouseY;
   for (let i = 1; i < TRAIL_POINTS; i++) {
     trail[i].x += (trail[i - 1].x - trail[i].x) * 0.5;
     trail[i].y += (trail[i - 1].y - trail[i].y) * 0.5;
