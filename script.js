@@ -540,39 +540,39 @@ Particle.prototype.update = function() {
   }
 };
 
-/* ===== GLITCH TEXT EFFECT ===== */
+/* ===== GLITCH TEXT EFFECT (cinematic flicker) ===== */
 function triggerGlitch(el) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&';
-  const original = el.dataset.text;
-  let iterations = 0;
-  const maxIter = original.length * 4;
-  const interval = setInterval(() => {
-    el.textContent = original.split('').map((char, i) => {
-      if (i < iterations / 4) return original[i];
-      return chars[Math.floor(Math.random() * chars.length)];
-    }).join('');
-    iterations++;
-    if (iterations >= maxIter) {
-      el.textContent = original;
-      clearInterval(interval);
-    }
-  }, 30);
+  const frames = [
+    { filter: 'brightness(1.8) saturate(2)', transform: 'translateX(3px)', duration: 50 },
+    { filter: 'brightness(0.6)', transform: 'translateX(-2px)', duration: 50 },
+    { filter: 'brightness(1.4)', transform: 'translateX(1px)', duration: 40 },
+    { filter: '', transform: '', duration: 0 }
+  ];
+  let i = 0;
+  function runFrame() {
+    if (i >= frames.length) return;
+    const f = frames[i];
+    el.style.filter = f.filter;
+    el.style.transform = f.transform;
+    i++;
+    if (i < frames.length) setTimeout(runFrame, f.duration);
+  }
+  runFrame();
 }
 
-// Trigger glitch on page load after a short delay
+// Trigger glitch on page load
 window.addEventListener('load', () => {
   setTimeout(() => {
     document.querySelectorAll('.glitch-text').forEach((el, i) => {
-      setTimeout(() => triggerGlitch(el), i * 300);
+      setTimeout(() => triggerGlitch(el), i * 250);
     });
-  }, 800);
-
-  // Repeat glitch every 8 seconds for a living feel
+  }, 900);
+  // Subtle repeat every 6 seconds
   setInterval(() => {
-    const els = document.querySelectorAll('.glitch-text');
-    const el = els[Math.floor(Math.random() * els.length)];
-    triggerGlitch(el);
-  }, 8000);
+    document.querySelectorAll('.glitch-text').forEach((el, i) => {
+      setTimeout(() => triggerGlitch(el), i * 200);
+    });
+  }, 6000);
 });
 
 /* ===== MAGNETIC BUTTONS ===== */
@@ -635,11 +635,11 @@ function scrambleReveal(el) {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@$%';
   const original = el.textContent;
   let iterations = 0;
-  const maxIter = original.length * 3;
+  const maxIter = Math.ceil(original.length * 1.2);
   const interval = setInterval(() => {
     el.textContent = original.split('').map((char, i) => {
       if (char === ' ') return ' ';
-      if (i < iterations / 3) return original[i];
+      if (i < iterations) return original[i];
       return chars[Math.floor(Math.random() * chars.length)];
     }).join('');
     iterations++;
@@ -647,7 +647,7 @@ function scrambleReveal(el) {
       el.textContent = original;
       clearInterval(interval);
     }
-  }, 25);
+  }, 18);
 }
 
 const scrambleObserver = new IntersectionObserver((entries) => {
