@@ -540,26 +540,6 @@ Particle.prototype.update = function() {
   }
 };
 
-/* ===== GLITCH TEXT EFFECT ===== */
-// CSS handles the animation. JS just intensifies it periodically.
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.querySelectorAll('.glitch-text').forEach((el, i) => {
-      setTimeout(() => {
-        el.classList.add('glitch-active');
-        setTimeout(() => el.classList.remove('glitch-active'), 1000);
-      }, i * 300);
-    });
-  }, 1200);
-  setInterval(() => {
-    document.querySelectorAll('.glitch-text').forEach((el, i) => {
-      setTimeout(() => {
-        el.classList.add('glitch-active');
-        setTimeout(() => el.classList.remove('glitch-active'), 1000);
-      }, i * 300);
-    });
-  }, 5000);
-});
 
 
 /* ===== MAGNETIC BUTTONS ===== */
@@ -582,13 +562,13 @@ document.querySelectorAll('.btn').forEach(btn => {
 /* ===== CURSOR TRAIL ===== */
 const trailContainer = document.getElementById('cursor-trail-container');
 const trailDots = [];
-const TRAIL_LENGTH = 12;
+const TRAIL_LENGTH = 28;
 
 for (let i = 0; i < TRAIL_LENGTH; i++) {
   const dot = document.createElement('div');
   dot.className = 'cursor-trail-dot';
-  dot.style.opacity = (1 - i / TRAIL_LENGTH) * 0.6;
-  dot.style.width = dot.style.height = (8 - i * 0.5) + 'px';
+  dot.style.opacity = (1 - i / TRAIL_LENGTH) * 0.7;
+  dot.style.width = dot.style.height = Math.max(2, 9 - i * 0.25) + 'px';
   trailContainer.appendChild(dot);
   trailDots.push({ el: dot, x: -100, y: -100 });
 }
@@ -600,15 +580,14 @@ document.addEventListener('mousemove', e => {
 });
 
 function animateTrail() {
-  let x = trailMouseX, y = trailMouseY;
   trailDots.forEach((dot, i) => {
     const prev = trailDots[i - 1];
     if (i === 0) {
-      dot.x += (trailMouseX - dot.x) * 0.4;
-      dot.y += (trailMouseY - dot.y) * 0.4;
+      dot.x += (trailMouseX - dot.x) * 0.3;
+      dot.y += (trailMouseY - dot.y) * 0.3;
     } else {
-      dot.x += (prev.x - dot.x) * 0.5;
-      dot.y += (prev.y - dot.y) * 0.5;
+      dot.x += (prev.x - dot.x) * 0.25;
+      dot.y += (prev.y - dot.y) * 0.25;
     }
     dot.el.style.left = dot.x + 'px';
     dot.el.style.top = dot.y + 'px';
