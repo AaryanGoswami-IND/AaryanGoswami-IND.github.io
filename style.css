@@ -534,7 +534,7 @@ body.cursor-hover #cursor-ring {
   position: relative; padding-left: 2rem;
 }
 .education-timeline::before {
-  content: ''; position: absolute; left: 0; top: 1.5rem; bottom: 1.5rem;
+  content: ''; position: absolute; left: 0; top: 2.4rem; bottom: 2.4rem;
   width: 2px;
   background: linear-gradient(to bottom, var(--accent), rgba(255,106,61,0.15), transparent);
 }
